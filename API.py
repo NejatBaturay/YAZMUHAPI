@@ -20,9 +20,9 @@ def readproductbycategory():
     item = request.args.get('q')
     
     translatequery = {
-        "Meyvesebze":1,
-        "Su":2,
-        "Şarküteri":3
+        "meyvesebze":1,
+        "kisiselBakim":2,
+        "atistirmalik":3
         }
    
     if(item is None):
@@ -34,11 +34,11 @@ def readproductbycategory():
          for row in b:
             
             dictproduct = {
-                 "Id":row[0],
-                 "Name":row[1],
-                 "Image":row[4],
-                 "Description":row[2],
-                 "Price":row[3]
+                 "id":row[0],
+                 "name":row[1],
+                 "image":row[4],
+                 "additionalInfo":row[2],
+                 "cost":float(row[3])
                  }
             listofproducts.append(dictproduct)
     
@@ -52,11 +52,11 @@ def readproductbycategory():
             for row in b:
              
                dictproduct = {
-                    "Id":row[0],
-                    "Name":row[1],
-                    "Image":row[4],
-                    "Description":row[2],
-                    "Price":row[3]
+                    "id":row[0],
+                    "name":row[1],
+                    "image":row[4],
+                    "additionalInfo":row[2],
+                    "Price":float(row[3])
                     }
        
             listofproducts.append(dictproduct)
@@ -98,10 +98,10 @@ def readproductbyid(ID):
     for row in b:
        
         dictproduct = {
-            "Id":row[0],
-            "Name":row[1],
-            "Image":row[4],
-            "Description":row[2],
+            "id":row[0],
+            "name":row[1],
+            "image":row[4],
+            "additionalInfo":row[2],
             "Price":row[3]
             }
 
@@ -111,21 +111,22 @@ def readproductbyid(ID):
 
 @app.route('/api/users/<int:userid>', methods=['GET'])
 def readuser(userid):
-    listofcardss = []    
+      
     cursor1 = conn.cursor()
-   
+    
+     
     b = cursor1.execute("SELECT Users.Id,Users.Name,Users.Email,Users.Phone FROM Users WHERE USERS.ID = ?",(userid,))
     for row in b:
        
         dictusers = {
             
-            "Id":row[0],
-            "Name":row[1], 
-            "Email":row[2],
-            "Phome":row[3],
+            "id":row[0],
+            "name":row[1], 
+            "email":row[2],
+            "phoneNumber":row[3],
             
             }
-   
+        
   
     return jsonify(dictusers)
 
@@ -133,40 +134,40 @@ def readuser(userid):
 
 @app.route('/api/users/<int:userid>/credit-cards', methods=['GET'])
 def readcards(userid):
-    listofcardss = []    
+    listofcards = []    
     cursor1 = conn.cursor()
    
     b = cursor1.execute("SELECT Cards.Id,Cards.cardName,Cards.lastThreeDigit FROM Cards INNER JOIN Users ON Cards.ID = Users.CardId WHERE USERS.ID = ?",(userid,))
     for row in b:
        
         dictcards = {
-            "Id":row[0],
-            "Name":row[1],
-            "LastThreeDigit":row[2],
+            "id":row[0],
+            "name":row[1],
+            "lastThreeDigit":str(row[2]),
           
             }
-   
+        listofcards.append(dictcards)
   
-    return jsonify(dictcards)
+    return jsonify(listofcards)
 
 
 
 @app.route('/api/users/<int:userid>/adress', methods=['GET'])
 def readadresses(userid):
-    listofcardss = []    
+    listofaddresses = []    
     cursor1 = conn.cursor()
    
     b = cursor1.execute("SELECT Address.Id,Addresses.Address FROM Addresses INNER JOIN Users ON Addresses.ID = Users.AddressID WHERE USERS.ID = ?",(userid,))
     for row in b:
        
         dictusers = {
-            "Id":row[0],
-            "Name":row[1],
+            "id":row[0],
+            "name":row[1],
           
             }
-   
+        dictusers.append(listofaddresses)
   
-    return jsonify(dictusers)
+    return jsonify(listofaddresses)
 
 
 @app.route('/api/order', methods=["POST","GET"])
